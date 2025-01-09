@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, Observable, throwError} from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { API_ENDPOINTS } from '../../constants/api-endpoints';
 import { WeatherForecast } from '../../interfaces/weather-forecast';
 
 @Injectable({
@@ -8,6 +10,7 @@ import { WeatherForecast } from '../../interfaces/weather-forecast';
 })
 
 export class ApiService {
+  private baseUrl = environment.apiBaseUrl;
 
   constructor(
     private http: HttpClient
@@ -15,7 +18,7 @@ export class ApiService {
 
   public getWeatherForecast$(): Observable<WeatherForecast[]> {
     return this.http
-      .get<WeatherForecast[]>('http://localhost:7200/WeatherForecast')
+      .get<WeatherForecast[]>(`${this.baseUrl}${API_ENDPOINTS.WEATHER_FORECAST}`)
       .pipe(catchError(this.handleError));
   }
 
