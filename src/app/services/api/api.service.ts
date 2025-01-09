@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-//import { WeatherForecast } from '../../interfaces/weather-forecast';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {catchError, Observable, throwError} from 'rxjs';
+import { WeatherForecast } from '../../interfaces/weather-forecast';
 
 @Injectable({
   providedIn: 'root',
@@ -9,11 +10,17 @@ import { HttpClient } from '@angular/common/http';
 export class ApiService {
 
   constructor(
-    //private http: HttpClient
+    private http: HttpClient
   ) { }
 
-  public getWeatherForecast$() {
-    //return this.http.get<WeatherForecast[]>('http://localhost:7200/WeatherForecast');
-    return [{date: '2025-01-10', temperatureC: 39, temperatureF: 102, summary: 'Warm'}];
+  public getWeatherForecast$(): Observable<WeatherForecast[]> {
+    return this.http
+      .get<WeatherForecast[]>('http://localhost:7200/WeatherForecast')
+      .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('API Error:', error);
+    return throwError(() => new Error('Something went wrong'));
   }
 }
