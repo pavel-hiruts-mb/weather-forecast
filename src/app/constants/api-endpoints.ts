@@ -1,3 +1,3 @@
 ﻿export const API_ENDPOINTS = {
-  WEATHER_FORECAST: '/WeatherForecast',
+  WEATHER_FORECAST: '/Forecast',
 };
