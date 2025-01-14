@@ -1,3 +1,3 @@
-<div *ngFor="let forecast of forecasts">
-  <p>{{ forecast.date }}: {{ forecast.temperatureC }}°C  - {{ forecast.summary }}</p>
+<div *ngFor="let forecast of forecasts ">
+  <p>{{ forecast.date }}: {{ forecast.temperatureC | number : '1.1-2' }}°C ({{ forecast.temperatureF | number : '1.1-2' }}°F) - {{ forecast.summary }}</p>
 </div>
