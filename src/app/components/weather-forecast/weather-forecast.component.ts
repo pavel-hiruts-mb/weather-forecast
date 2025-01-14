@@ -21,7 +21,7 @@ export class WeatherForecastComponent implements OnInit {
 
   ngOnInit() {
     this.apiService
-      .getWeatherForecast$()
+      .getForecast$()
       .pipe(map(forecasts => forecasts.map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) }))))
       .subscribe(response => { this.forecasts = response; })
   }

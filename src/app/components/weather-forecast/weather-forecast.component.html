@@ -1,3 +1,18 @@
-<div *ngFor="let forecast of forecasts ">
-  <p>{{ forecast.date }}: {{ forecast.temperatureC | number : '1.1-2' }}°C ({{ forecast.temperatureF | number : '1.1-2' }}°F) - {{ forecast.summary }}</p>
-</div>
+<table>
+  <thead>
+  <tr>
+    <th>Date</th>
+    <th>°C</th>
+    <th>°F</th>
+    <th>Summary</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let forecast of forecasts">
+    <td>{{ forecast.date }}</td>
+    <td>{{ forecast.temperatureC | number : '1.1-2' }}</td>
+    <td>{{ forecast.temperatureF | number : '1.1-2' }}</td>
+    <td>{{ forecast.summary }}</td>
+  </tr>
+  </tbody>
+</table>

@@ -1,1 +1,12 @@
-<p>summaries works!</p>
+<table>
+  <thead>
+  <tr>
+    <th>Text</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let summary of summaries">
+    <td>{{ summary.text }}</td>
+  </tr>
+  </tbody>
+</table>
