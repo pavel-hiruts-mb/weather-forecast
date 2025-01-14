@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../services/api/api.service';
 import {Summary} from '../../interfaces/summary';
-import {DecimalPipe, NgForOf} from '@angular/common';
+import {NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-summaries',
   imports: [
-    DecimalPipe,
     NgForOf
   ],
   templateUrl: './summaries.component.html',
