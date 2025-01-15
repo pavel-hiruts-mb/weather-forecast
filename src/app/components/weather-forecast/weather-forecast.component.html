@@ -5,6 +5,8 @@
     <th>°C</th>
     <th>°F</th>
     <th>Summary</th>
+    <th>Created</th>
+    <th>Modified</th>
   </tr>
   </thead>
   <tbody>
@@ -12,7 +14,9 @@
     <td>{{ forecast.date }}</td>
     <td>{{ forecast.temperatureC | number : '1.1-2' }}</td>
     <td>{{ forecast.temperatureF | number : '1.1-2' }}</td>
-    <td>{{ forecast.summary }}</td>
+    <td>{{ forecast.summary.text }}</td>
+    <td>{{ forecast.created | date : 'dd/MM/yyyy HH:mm:ss' }}</td>
+    <td>{{ forecast.modified | date : 'dd/MM/yyyy HH:mm:ss' }}</td>
   </tr>
   </tbody>
 </table>

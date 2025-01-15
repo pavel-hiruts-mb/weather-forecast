@@ -1,4 +1,8 @@
 ﻿export const API_ENDPOINTS = {
-  FORECAST: '/Forecast',
-  SUMMARY: '/Summary',
+  FORECAST_ALL: '/forecast/all',
+  SUMMARY_ALL: '/summary/all',
+  SUMMARY_POST: '/summary',
+  SUMMARY_PUT: '/summary/',
+  FORECAST_PUT: '/forecast/'
+
 };

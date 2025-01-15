@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { WeatherForecastComponent } from './components/weather-forecast/weather-forecast.component';
 import { SummariesComponent } from './components/summaries/summaries.component';
+import {ForecastComponent} from './components/forecast/forecast.component';
 
 export const routes: Routes = [
-    { path: 'weather-forecast', component: WeatherForecastComponent },
+    { path: 'forecasts', component: ForecastComponent },
     { path: 'summaries', component: SummariesComponent },
-    { path: '', redirectTo: '/weather-forecast', pathMatch: 'full' }
+    { path: '', redirectTo: '/forecasts', pathMatch: 'full' }
 ];

@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService}  from '../../services/api/api.service';
-import {WeatherForecast} from '../../interfaces/weather-forecast';
-import {DecimalPipe, NgForOf} from '@angular/common';
+import {ForecastViewModel} from '../../interfaces/forecast-view-model';
+import {DatePipe, DecimalPipe, NgForOf} from '@angular/common';
 import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-weather-forecast',
   imports: [
     NgForOf,
-    DecimalPipe
+    DecimalPipe,
+    DatePipe
   ],
   templateUrl: './weather-forecast.component.html',
   styleUrl: './weather-forecast.component.css'
 })
 export class WeatherForecastComponent implements OnInit {
 
-  forecasts: WeatherForecast[] = [];
+  forecasts: ForecastViewModel[] = [];
 
   constructor(private apiService: ApiService) {}
 
