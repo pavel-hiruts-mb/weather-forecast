@@ -10,7 +10,7 @@ import {
   MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable, MatTableDataSource
 } from '@angular/material/table';
 import {FormsModule} from '@angular/forms';
-import {ForecastViewModel} from '../../interfaces/forecast-view-model';
+import {CreateSummaryModel} from '../../interfaces/create-summary-model';
 
 @Component({
   selector: 'app-summaries',
@@ -55,15 +55,46 @@ export class SummariesComponent implements OnInit {
   }
 
   saveEdit(id: number, text: string) {
+    if (id === 0) {
+      this.postSummary(text);
+    }
+    else {
+      this.putSummary(id, text);
+    }
+
+    this.editingIndex = null;
+  }
+
+  putSummary(id: number, text: string){
     let data: UpdateSummaryModel = { text: text };
     this.apiService
       .putSummary$(id, data)
       .subscribe(response => {
         let index = this.dataSource.data.findIndex(s => s.id === id);
         this.dataSource.data[index] = response;
-        this.dataSource.data = [...this.dataSource.data]
-        this.changeDetectorRef.detectChanges();
+        this.refreshDataSources();
       })
-    this.editingIndex = null;
+  }
+
+  postSummary(text: string){
+    let data: CreateSummaryModel = { text: text };
+    this.apiService
+      .postSummary$(data)
+      .subscribe(response => {
+        this.dataSource.data[this.dataSource.data.length - 1] = response;
+        this.refreshDataSources();
+      })
+  }
+
+  addNew(){
+    let newSummary: SummaryViewModel = { id: 0, text: '', created: '', modified: ''};
+    this.dataSource.data.push(newSummary);
+    this.startEdit(this.dataSource.data.length - 1);
+    this.refreshDataSources()
+  }
+
+  private refreshDataSources() {
+    this.dataSource.data = [...this.dataSource.data];
+    this.changeDetectorRef.detectChanges();
   }
 }
