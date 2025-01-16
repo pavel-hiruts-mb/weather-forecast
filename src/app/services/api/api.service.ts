@@ -8,6 +8,7 @@ import {SummaryViewModel} from '../../interfaces/summary-view-model';
 import {CreateSummaryModel} from '../../interfaces/create-summary-model';
 import {UpdateSummaryModel} from '../../interfaces/update-summary-model';
 import {ForecastUpdateModel} from '../../interfaces/forecast-update-model';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class ApiService {
   public getForecast$(): Observable<ForecastViewModel[]> {
     return this.http
       .get<ForecastViewModel[]>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_ALL}`)
+      .pipe(map(forecasts => forecasts.map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) }))))
       .pipe(catchError(this.handleError));
   }
 
@@ -47,6 +49,7 @@ export class ApiService {
   putForecast$(id: number, data: ForecastUpdateModel) {
     return this.http
       .put<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_PUT}${id}`, data)
+      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
       .pipe(catchError(this.handleError));
   }
 
@@ -55,5 +58,7 @@ export class ApiService {
     return throwError(() => new Error('Something went wrong'));
   }
 
-
+  private calculateFahrenheit(celsius: number): number {
+    return 32 + (celsius / 0.5556);
+  }
 }

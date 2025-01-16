@@ -1,7 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ForecastViewModel} from '../../interfaces/forecast-view-model';
 import {ApiService} from '../../services/api/api.service';
-import {map} from 'rxjs/operators';
 import {DatePipe, DecimalPipe, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {
@@ -11,11 +10,11 @@ import {
   MatHeaderCell, MatHeaderCellDef,
   MatHeaderRow,
   MatHeaderRowDef,
-  MatRow, MatRowDef, MatTable
+  MatRow, MatRowDef, MatTable, MatTableDataSource
 } from '@angular/material/table';
 import {UpdateSummaryModel} from '../../interfaces/update-summary-model';
 import {ForecastUpdateModel} from '../../interfaces/forecast-update-model';
-import {MatOption, MatSelect} from '@angular/material/select';
+import {MatFormField, MatOption, MatSelect} from '@angular/material/select';
 import {SummaryViewModel} from '../../interfaces/summary-view-model';
 
 @Component({
@@ -37,25 +36,30 @@ import {SummaryViewModel} from '../../interfaces/summary-view-model';
     NgIf,
     MatHeaderCellDef,
     MatSelect,
-    MatOption
+    MatOption,
+    MatFormField
   ],
   templateUrl: './forecast.component.html',
   styleUrl: './forecast.component.css'
 })
 export class ForecastComponent implements OnInit {
 
-  forecasts: ForecastViewModel[] = [];
   summaries: SummaryViewModel[] = [];
   displayedColumns: string[] = ['date', 'celsius', 'fahrenheit', 'summary', 'created', 'modified', 'actions'];
   editingIndex: number | null = null;
+  dataSource = new MatTableDataSource<ForecastViewModel>();
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.apiService
       .getForecast$()
-      .pipe(map(forecasts => forecasts.map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) }))))
-      .subscribe(response => { this.forecasts = response; })
+
+      .subscribe(response => {
+        this.dataSource.data = response;
+      })
     this.apiService
       .getSummaries$()
       .subscribe(response => {
@@ -69,23 +73,32 @@ export class ForecastComponent implements OnInit {
 
   saveEdit(data: ForecastViewModel) {
     let id = data.id;
-    console.log(id);
     let updateModel: ForecastUpdateModel = {
       date: data.date,
       temperatureC: data.temperatureC,
       summaryId: data.summary.id
     };
+
     this.apiService
       .putForecast$(id, updateModel)
       .subscribe(response => {
-        console.log(this.forecasts);
-        let index = this.forecasts.findIndex(s => s.id === id);
-        this.forecasts[index] = response;
+        this.dataSource.data[this.getForecastIndex(id)] = response;
+        this.dataSource.data = [...this.dataSource.data]
+        this.changeDetectorRef.detectChanges();
       })
+
     this.editingIndex = null;
   }
 
-  private calculateFahrenheit(celsius: number): number {
-    return 32 + (celsius / 0.5556);
+  updateSummaryId(id: number, summaryId: number) {
+    this.dataSource.data[this.getForecastIndex(id)].summary = this.summaries[this.getSummaryIndex(summaryId)];
+  }
+
+  private getForecastIndex(id: number): number {
+    return this.dataSource.data.findIndex(f => f.id === id);
+  }
+
+  private getSummaryIndex(id: number): number {
+    return this.summaries.findIndex(f => f.id === id);
   }
 }

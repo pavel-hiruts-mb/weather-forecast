@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ApiService} from '../../services/api/api.service';
 import {SummaryViewModel} from '../../interfaces/summary-view-model';
 import {UpdateSummaryModel} from '../../interfaces/update-summary-model';
@@ -7,9 +7,10 @@ import {
   MatCell, MatCellDef,
   MatColumnDef,
   MatHeaderCell, MatHeaderCellDef,
-  MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable
+  MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable, MatTableDataSource
 } from '@angular/material/table';
 import {FormsModule} from '@angular/forms';
+import {ForecastViewModel} from '../../interfaces/forecast-view-model';
 
 @Component({
   selector: 'app-summaries',
@@ -33,17 +34,19 @@ import {FormsModule} from '@angular/forms';
 })
 export class SummariesComponent implements OnInit {
 
-  summaries: SummaryViewModel[] = [];
+  dataSource = new MatTableDataSource<SummaryViewModel>();
   displayedColumns: string[] = ['text', 'created', 'modified', 'actions'];
   editingIndex: number | null = null;
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.apiService
       .getSummaries$()
       .subscribe(response => {
-        this.summaries = response;
+        this.dataSource.data = response;
       });
   }
 
@@ -56,9 +59,10 @@ export class SummariesComponent implements OnInit {
     this.apiService
       .putSummary$(id, data)
       .subscribe(response => {
-        let index = this.summaries.findIndex(s => s.id === id);
-        console.log(index);
-        this.summaries[index] = response;
+        let index = this.dataSource.data.findIndex(s => s.id === id);
+        this.dataSource.data[index] = response;
+        this.dataSource.data = [...this.dataSource.data]
+        this.changeDetectorRef.detectChanges();
       })
     this.editingIndex = null;
   }
