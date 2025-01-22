@@ -3,6 +3,7 @@
   SUMMARY_ALL: '/summary/all',
   SUMMARY_POST: '/summary',
   SUMMARY_PUT: '/summary/',
-  FORECAST_PUT: '/forecast/'
+  FORECAST_PUT: '/forecast/',
+  FORECAST_GET: '/forecast/',
 
 };

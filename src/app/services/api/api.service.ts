@@ -21,10 +21,17 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  public getForecast$(): Observable<ForecastViewModel[]> {
+  public getForecasts$(): Observable<ForecastViewModel[]> {
     return this.http
       .get<ForecastViewModel[]>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_ALL}`)
       .pipe(map(forecasts => forecasts.map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) }))))
+      .pipe(catchError(this.handleError));
+  }
+
+  public getForecast$(id: number): Observable<ForecastViewModel> {
+    return this.http
+      .get<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_GET}${id}`)
+      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
       .pipe(catchError(this.handleError));
   }
 
@@ -34,7 +41,7 @@ export class ApiService {
     .pipe(catchError(this.handleError));
   }
 
-  public postSummary$(data: CreateSummaryModel): Observable<any> {
+  public postSummary$(data: CreateSummaryModel): Observable<SummaryViewModel> {
     return this.http
       .post<any>(`${this.baseUrl}${API_ENDPOINTS.SUMMARY_POST}`, data)
       .pipe(catchError(this.handleError));

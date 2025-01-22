@@ -1,0 +1,13 @@
+.forecast-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.forecast-table th, .forecast-table td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+.forecast-table th {
+  background-color: #f2f2f2;
+}

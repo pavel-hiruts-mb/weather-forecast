@@ -1,77 +1,31 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<div>
+  <button (click)="addData()">
+    Add
+  </button>
+</div>
 
-  <ng-container matColumnDef="date">
-    <th mat-header-cell *matHeaderCellDef> Date </th>
-    <td mat-cell *matCellDef="let element; let i = index">
-      <ng-container *ngIf="editingIndex === i; else readMode">
-        <input [(ngModel)]="element.date" type="date">
-      </ng-container>
-      <ng-template #readMode>
-        {{element.date | date: 'dd/MM/yyyy'}}
-      </ng-template>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="celsius">
-    <th mat-header-cell *matHeaderCellDef> °C </th>
-    <td mat-cell *matCellDef="let element; let i = index">
-      <ng-container *ngIf="editingIndex === i; else readMode">
-        <input [(ngModel)]="element.temperatureC" type="number">
-      </ng-container>
-      <ng-template #readMode>
-        {{element.temperatureC | number : '1.1-2'}}
-      </ng-template>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="fahrenheit">
-    <th mat-header-cell *matHeaderCellDef> °F </th>
-    <td mat-cell *matCellDef="let element">
-        {{element.temperatureF | number : '1.1-2'}}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="summary">
-    <th mat-header-cell *matHeaderCellDef> Summary </th>
-    <td mat-cell *matCellDef="let element; let i = index">
-      <ng-container *ngIf="editingIndex === i; else readMode">
-        <mat-form-field>
-          <mat-select [(value)]="element.summary.id" (selectionChange)="updateSummaryId(element.id, $event.value)">
-            <mat-option *ngFor="let summary of summaries" [value]="summary.id">
-              {{summary.text}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ng-container>
-      <ng-template #readMode>
-        {{element.summary.text }}
-      </ng-template>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="created">
-    <th mat-header-cell *matHeaderCellDef> Created </th>
-    <td mat-cell *matCellDef="let element">
-      {{ element.created | date: 'dd/MM/yyyy HH:mm:ss' }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="modified">
-    <th mat-header-cell *matHeaderCellDef> Modified </th>
-    <td mat-cell *matCellDef="let element">
-      {{element.modified | date: 'dd/MM/yyyy HH:mm:ss' }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef> Actions </th>
-    <td mat-cell *matCellDef="let element; let i = index">
-      <button *ngIf="editingIndex !== i" (click)="startEdit(i)">Edit</button>
-      <button *ngIf="editingIndex === i" (click)="saveEdit(element)">Save</button>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
+<table class="forecast-table">
+  <thead>
+  <tr>
+    @for (header of headers; track header){
+      <th>{{ header }}</th>
+    }
+  </tr>
+  </thead>
+  <tbody>
+    @for (forecast of forecasts$ | async; track forecast.id){
+      <tr>
+        <td>{{ forecast.date | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ forecast.temperatureC | number : '1.1-2' }}</td>
+        <td>{{ forecast.temperatureF | number : '1.1-2' }}</td>
+        <td>{{ forecast.summary.text }}</td>
+        <td>{{ forecast.created | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
+        <td>{{ forecast.modified | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
+        <td>
+          <button (click)="edit(forecast.id)">Edit</button>
+          <button (click)="remove(forecast.id)">Remove</button>
+        </td>
+      </tr>
+    }
+  </tbody>
 </table>
