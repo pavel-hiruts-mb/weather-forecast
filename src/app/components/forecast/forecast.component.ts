@@ -5,6 +5,8 @@ import {AsyncPipe, DatePipe, DecimalPipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-forecast',
@@ -23,8 +25,9 @@ export class ForecastComponent {
   forecasts$: Observable<ForecastViewModel[]>;
 
   constructor(
-    apiService: ApiService,
-    private router: Router) {
+    private apiService: ApiService,
+    private router: Router,
+    public dialog: MatDialog) {
     this.forecasts$ = apiService.getForecasts$();
   }
 
@@ -33,7 +36,16 @@ export class ForecastComponent {
   }
 
   remove(id: number) {
-    this.router.navigate([`/forecast/${id}/remove`])
+    const dialogRef = this.dialog.open(ConfirmDialogComponent);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.apiService
+          .deleteForecast$(id)
+          .subscribe(() => {
+            this.forecasts$ = this.apiService.getForecasts$();
+          })
+      }
+    });
   }
 
   edit(id: number) {

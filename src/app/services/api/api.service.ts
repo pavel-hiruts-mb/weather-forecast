@@ -54,17 +54,23 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  putForecast$(id: number, data: ForecastUpdateModel) {
+  public putForecast$(id: number, data: ForecastUpdateModel) {
     return this.http
       .put<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_PUT}${id}`, data)
       .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
       .pipe(catchError(this.handleError));
   }
 
-  postForecast$( data: ForecastCreateModel) {
+  public postForecast$(data: ForecastCreateModel) {
     return this.http
       .post<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_POST}`, data)
       .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
+      .pipe(catchError(this.handleError));
+  }
+
+  public deleteForecast$(id: number): Observable<any> {
+    return this.http
+      .delete((`${this.baseUrl}${API_ENDPOINTS.FORECAST_DELETE}${id}`))
       .pipe(catchError(this.handleError));
   }
 
