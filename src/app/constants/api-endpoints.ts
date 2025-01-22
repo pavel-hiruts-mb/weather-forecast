@@ -4,6 +4,7 @@
   SUMMARY_POST: '/summary',
   SUMMARY_PUT: '/summary/',
   FORECAST_PUT: '/forecast/',
+  FORECAST_POST: '/forecast',
   FORECAST_GET: '/forecast/',
 
 };

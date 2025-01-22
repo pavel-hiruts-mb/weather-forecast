@@ -23,53 +23,73 @@ export class ForecastEditComponent implements OnInit {
   formGroup: FormGroup | undefined;
   summaries$: Observable<SummaryViewModel[]>;
   id: number;
-  forecast$: Observable<ForecastViewModel>;
+  forecast$: Observable<ForecastViewModel> | undefined;
 
   constructor(
     private apiService: ApiService,
     private router: Router,
     route: ActivatedRoute,) {
     this.id = route.snapshot.params['id'];
-    this.forecast$ = apiService.getForecast$(this.id);
+    if (this.id !== undefined){
+      this.forecast$ = apiService.getForecast$(this.id);
+    }
+
     this.summaries$ = apiService.getSummaries$();
   }
 
   ngOnInit(): void {
-    this.forecast$.subscribe(forecast => {
-      this.formGroup = new FormGroup({
-        date: new FormControl(forecast.date, Validators.required),
-        temperatureC: new FormControl(forecast.temperatureC, Validators.required),
-        temperatureF: new FormControl(forecast.temperatureF),
-        summaryId: new FormControl(forecast.summary.id, Validators.required),
-        created: new FormControl(forecast.created),
-        modified: new FormControl(forecast.modified),
+    if (this.id !== undefined) {
+      this.forecast$?.subscribe(forecast => {
+        this.createFormGroup(forecast);
       });
-
-      let tmpC =  this.formGroup?.get('temperatureC');
-      let tmpF =  this.formGroup?.get('temperatureF');
-
-      tmpC?.valueChanges.subscribe(temperatureC => {
-        tmpF?.setValue(this.convertToFahrenheit(temperatureC), {emitEvent: false});
-      })
-    });
+    }else{
+      this.createFormGroup(undefined);
+    }
   }
 
   onSubmit() {
-    const value = this.formGroup?.value as ForecastUpdateModel;
-    console.log(value);
-    this.apiService.putForecast$(this.id, {
+    const value = this.formGroup?.value;
+    const model: ForecastUpdateModel = {
       date: value.date,
       temperatureC: value.temperatureC,
       summaryId: value.summaryId,
-    })
-      .subscribe(res => {
-        this.router.navigate(['/forecasts'])})
+    }
+    if (this.id !== undefined) {
+      this.apiService
+        .putForecast$(this.id, model)
+        .subscribe(() => {
+          this.router.navigate(['/forecasts'])
+        })
+    }else{
+      this.apiService
+        .postForecast$(model)
+        .subscribe(() => {
+          this.router.navigate(['/forecasts'])
+        })
+    }
   }
 
   onCancel() {
     this.router.navigate(['/forecasts']);
   }
 
+  createFormGroup(forecast: ForecastViewModel | undefined){
+    this.formGroup = new FormGroup({
+      date: new FormControl(forecast?.date, Validators.required),
+      temperatureC: new FormControl(forecast?.temperatureC, Validators.required),
+      temperatureF: new FormControl(forecast?.temperatureF),
+      summaryId: new FormControl(forecast?.summary.id, Validators.required),
+      created: new FormControl(forecast?.created),
+      modified: new FormControl(forecast?.modified),
+    });
+
+    let tmpC = this.formGroup?.get('temperatureC');
+    let tmpF = this.formGroup?.get('temperatureF');
+
+    tmpC?.valueChanges.subscribe(temperatureC => {
+      tmpF?.setValue(this.convertToFahrenheit(temperatureC), {emitEvent: false});
+    });
+  }
 
   convertToFahrenheit(celsius: number): number {
     return (celsius * 9/5) + 32;

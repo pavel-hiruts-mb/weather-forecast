@@ -29,11 +29,11 @@ export class ForecastComponent {
   }
 
   addData() {
-
+    this.router.navigate(['/forecast/add']);
   }
 
   remove(id: number) {
-
+    this.router.navigate([`/forecast/${id}/remove`])
   }
 
   edit(id: number) {

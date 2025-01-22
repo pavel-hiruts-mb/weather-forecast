@@ -9,6 +9,7 @@ import {CreateSummaryModel} from '../../interfaces/create-summary-model';
 import {UpdateSummaryModel} from '../../interfaces/update-summary-model';
 import {ForecastUpdateModel} from '../../interfaces/forecast-update-model';
 import {map} from 'rxjs/operators';
+import {ForecastCreateModel} from '../../interfaces/forecast-create-model';
 
 @Injectable({
   providedIn: 'root',
@@ -60,6 +61,13 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  postForecast$( data: ForecastCreateModel) {
+    return this.http
+      .post<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_POST}`, data)
+      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     return throwError(() => new Error('Something went wrong'));
@@ -68,4 +76,6 @@ export class ApiService {
   private calculateFahrenheit(celsius: number): number {
     return 32 + (celsius / 0.5556);
   }
+
+
 }

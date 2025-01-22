@@ -6,6 +6,7 @@ import { ForecastEditComponent } from './components/forecast-edit/forecast-edit.
 export const routes: Routes = [
     { path: 'forecasts', component: ForecastComponent },
     { path: 'forecast/:id/edit', component: ForecastEditComponent },
+    { path: 'forecast/add', component: ForecastEditComponent },
     { path: 'summaries', component: SummariesComponent },
     { path: '', redirectTo: '/forecasts', pathMatch: 'full' }
 ];
