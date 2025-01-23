@@ -3,12 +3,12 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {API_ENDPOINTS} from '../../constants/api-endpoints';
+import {map} from 'rxjs/operators';
 import {ForecastViewModel} from '../../interfaces/forecast-view-model';
 import {SummaryViewModel} from '../../interfaces/summary-view-model';
-import {CreateSummaryModel} from '../../interfaces/create-summary-model';
-import {UpdateSummaryModel} from '../../interfaces/update-summary-model';
+import {SummaryCreateModel} from '../../interfaces/summary-create-model';
+import {SummaryUpdateModel} from '../../interfaces/summary-update-model';
 import {ForecastUpdateModel} from '../../interfaces/forecast-update-model';
-import {map} from 'rxjs/operators';
 import {ForecastCreateModel} from '../../interfaces/forecast-create-model';
 
 @Injectable({
@@ -42,13 +42,13 @@ export class ApiService {
     .pipe(catchError(this.handleError));
   }
 
-  public postSummary$(data: CreateSummaryModel): Observable<SummaryViewModel> {
+  public postSummary$(data: SummaryCreateModel): Observable<SummaryViewModel> {
     return this.http
       .post<any>(`${this.baseUrl}${API_ENDPOINTS.SUMMARY_POST}`, data)
       .pipe(catchError(this.handleError));
   }
 
-  public putSummary$(id: number, data: UpdateSummaryModel): Observable<SummaryViewModel> {
+  public putSummary$(id: number, data: SummaryUpdateModel): Observable<SummaryViewModel> {
     return this.http
       .put<SummaryViewModel>(`${this.baseUrl}${API_ENDPOINTS.SUMMARY_PUT}${id}`, data)
       .pipe(catchError(this.handleError));

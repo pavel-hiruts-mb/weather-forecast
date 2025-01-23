@@ -6,7 +6,7 @@ import {SummaryViewModel} from '../../interfaces/summary-view-model';
 import {ApiService} from '../../services/api/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IdShareService} from '../../services/id-share/id-share.service';
-import {UpdateSummaryModel} from '../../interfaces/update-summary-model';
+import {SummaryUpdateModel} from '../../interfaces/summary-update-model';
 
 @Component({
   selector: 'app-summary',
@@ -46,7 +46,7 @@ export class SummaryComponent implements OnInit {
 
   onSubmit() {
     const value = this.formGroup?.value;
-    const model: UpdateSummaryModel = {
+    const model: SummaryUpdateModel = {
       text: value.text,
     }
     if (this.id !== undefined) {
