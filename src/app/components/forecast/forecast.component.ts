@@ -35,7 +35,6 @@ export class ForecastComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //console.log(typeof this.idShareService.getId());
     this.selectRow(this.idShareService.getId());
     this.idShareService.setId(undefined);
     }

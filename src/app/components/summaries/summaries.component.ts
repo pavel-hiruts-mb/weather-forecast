@@ -1,100 +1,74 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ApiService} from '../../services/api/api.service';
 import {SummaryViewModel} from '../../interfaces/summary-view-model';
-import {UpdateSummaryModel} from '../../interfaces/update-summary-model';
-import {DatePipe, NgIf} from '@angular/common';
-import {
-  MatCell, MatCellDef,
-  MatColumnDef,
-  MatHeaderCell, MatHeaderCellDef,
-  MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable, MatTableDataSource
-} from '@angular/material/table';
+import {AsyncPipe, DatePipe, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {CreateSummaryModel} from '../../interfaces/create-summary-model';
+import {Observable} from 'rxjs';
+import {Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {IdShareService} from '../../services/id-share/id-share.service';
+import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-summaries',
   imports: [
-    MatTable,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCell,
-    NgIf,
     FormsModule,
-    MatHeaderRow,
-    MatRow,
-    MatHeaderCellDef,
-    MatCellDef,
-    MatRowDef,
-    MatHeaderRowDef,
-    DatePipe
+    DatePipe,
+    AsyncPipe
   ],
   templateUrl: './summaries.component.html',
   styleUrl: './summaries.component.css'
 })
 export class SummariesComponent implements OnInit {
 
-  dataSource = new MatTableDataSource<SummaryViewModel>();
-  displayedColumns: string[] = ['text', 'created', 'modified', 'actions'];
-  editingIndex: number | null = null;
+  headers: string[] = ['Summary', 'Created', 'Modified'];
+  summaries$: Observable<SummaryViewModel[]>;
+  selectedSummaryId: number | undefined;
 
   constructor(
     private apiService: ApiService,
-    private changeDetectorRef: ChangeDetectorRef) {}
+    private router: Router,
+    public dialog: MatDialog,
+    public idShareService: IdShareService) {
+    this.summaries$ = apiService.getSummaries$();
+  }
 
   ngOnInit() {
-    this.apiService
-      .getSummaries$()
-      .subscribe(response => {
-        this.dataSource.data = response;
-      });
+    this.selectRow(this.idShareService.getId());
+    this.idShareService.setId(undefined);
   }
 
-  startEdit(index: number) {
-    this.editingIndex = index;
+  selectRow(id: number | undefined) {
+    this.selectedSummaryId = id;
   }
 
-  saveEdit(id: number, text: string) {
-    if (id === 0) {
-      this.postSummary(text);
-    }
-    else {
-      this.putSummary(id, text);
+  addData() {
+    this.router.navigate(['/summary/add']);
+  }
+
+  edit() {
+    if (this.selectedSummaryId === undefined) {
+      return;
     }
 
-    this.editingIndex = null;
+    this.router.navigate([`/summary/${this.selectedSummaryId}/edit`]);
   }
 
-  putSummary(id: number, text: string){
-    let data: UpdateSummaryModel = { text: text };
-    this.apiService
-      .putSummary$(id, data)
-      .subscribe(response => {
-        let index = this.dataSource.data.findIndex(s => s.id === id);
-        this.dataSource.data[index] = response;
-        this.refreshDataSources();
-      })
-  }
+  remove() {
+    if (this.selectedSummaryId === undefined) {
+      return;
+    }
 
-  postSummary(text: string){
-    let data: CreateSummaryModel = { text: text };
-    this.apiService
-      .postSummary$(data)
-      .subscribe(response => {
-        this.dataSource.data[this.dataSource.data.length - 1] = response;
-        this.refreshDataSources();
-      })
-  }
-
-  addNew(){
-    let newSummary: SummaryViewModel = { id: 0, text: '', created: '', modified: ''};
-    this.dataSource.data.push(newSummary);
-    this.startEdit(this.dataSource.data.length - 1);
-    this.refreshDataSources()
-  }
-
-  private refreshDataSources() {
-    this.dataSource.data = [...this.dataSource.data];
-    this.changeDetectorRef.detectChanges();
+    const dialogRef = this.dialog.open(ConfirmDialogComponent);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.apiService
+          .deleteSummary$(this.selectedSummaryId!)
+          .subscribe(() => {
+            this.selectedSummaryId = undefined;
+            this.summaries$ = this.apiService.getSummaries$();
+          })
+      }
+    });
   }
 }

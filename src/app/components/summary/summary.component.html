@@ -1,0 +1,17 @@
+<form *ngIf="formGroup" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="text">Text:</label>
+    <input id="text" formControlName="text" type="text">
+  </div>
+  <div>
+    <label for="created">Created:</label>
+    <input id="created" formControlName="created" readonly>
+  </div>
+  <div>
+    <label for="modified">Modified:</label>
+    <input id="modified" formControlName="modified" readonly>
+  </div>
+  <button type="submit">Submit</button>
+  <button type="button" (click)="onCancel()">Cancel</button>
+</form>
+

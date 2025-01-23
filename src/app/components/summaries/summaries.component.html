@@ -1,41 +1,24 @@
-<button (click)="addNew()">Add</button>
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<div>
+  <button (click)="addData()">Add</button>
+  <button (click)="edit()" [disabled]="selectedSummaryId === undefined">Edit</button>
+  <button (click)="remove()" [disabled]="selectedSummaryId === undefined">Delete</button>
+</div>
 
-  <ng-container matColumnDef="text">
-    <th mat-header-cell *matHeaderCellDef> Text </th>
-    <td mat-cell *matCellDef="let element; let i = index">
-      <ng-container *ngIf="editingIndex === i; else readMode">
-        <input [(ngModel)]="element.text">
-      </ng-container>
-      <ng-template #readMode>
-        {{element.text}}
-      </ng-template>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="created">
-    <th mat-header-cell *matHeaderCellDef> Created </th>
-    <td mat-cell *matCellDef="let element">
-        {{ element.created | date: 'dd/MM/yyyy HH:mm:ss' }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="modified">
-    <th mat-header-cell *matHeaderCellDef> Modified </th>
-    <td mat-cell *matCellDef="let element">
-        {{element.modified | date: 'dd/MM/yyyy HH:mm:ss' }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef> Actions </th>
-    <td mat-cell *matCellDef="let element; let i = index">
-      <button *ngIf="editingIndex !== i" (click)="startEdit(i)">Edit</button>
-      <button *ngIf="editingIndex === i" (click)="saveEdit(element.id, element.text)">Save</button>
-    </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
+<table class="forecast-table">
+  <thead>
+  <tr>
+    @for (header of headers; track header){
+      <th>{{ header }}</th>
+    }
+  </tr>
+  </thead>
+  <tbody>
+    @for (summary of summaries$ | async; track summary.id){
+      <tr (click)="selectRow(summary.id)" [class.selected]="summary.id === selectedSummaryId">
+        <td>{{ summary.text }}</td>
+        <td>{{ summary.created | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
+        <td>{{ summary.modified | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
+      </tr>
+    }
+  </tbody>
 </table>

@@ -1,6 +1,4 @@
-﻿import {catchError} from 'rxjs';
-
-export const API_ENDPOINTS = {
+﻿export const API_ENDPOINTS = {
   FORECAST_ALL: '/forecast/all',
   SUMMARY_ALL: '/summary/all',
   SUMMARY_POST: '/summary',
@@ -9,5 +7,6 @@ export const API_ENDPOINTS = {
   FORECAST_POST: '/forecast',
   FORECAST_DELETE: '/forecast/',
   FORECAST_GET: '/forecast/',
-
+  SUMMARY_DELETE: '/summary/',
+  SUMMARY_GET: '/summary/'
 };

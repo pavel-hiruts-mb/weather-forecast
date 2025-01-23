@@ -74,6 +74,18 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  public deleteSummary$(id: number) {
+    return this.http
+      .delete((`${this.baseUrl}${API_ENDPOINTS.SUMMARY_DELETE}${id}`))
+      .pipe(catchError(this.handleError));
+  }
+
+  getSummary$(id: number): Observable<SummaryViewModel> {
+    return this.http
+      .get<SummaryViewModel>(`${this.baseUrl}${API_ENDPOINTS.SUMMARY_GET}${id}`)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     return throwError(() => new Error('Something went wrong'));
@@ -82,6 +94,4 @@ export class ApiService {
   private calculateFahrenheit(celsius: number): number {
     return 32 + (celsius / 0.5556);
   }
-
-
 }
