@@ -1,7 +1,7 @@
 <div>
-  <button (click)="addData()">
-    Add
-  </button>
+  <button (click)="addData()">Add</button>
+  <button (click)="edit()" [disabled]="selectedForecastId === undefined">Edit</button>
+  <button (click)="remove()" [disabled]="selectedForecastId === undefined">Delete</button>
 </div>
 
 <table class="forecast-table">
@@ -14,17 +14,13 @@
   </thead>
   <tbody>
     @for (forecast of forecasts$ | async; track forecast.id){
-      <tr>
+      <tr (click)="selectRow(forecast.id)" [class.selected]="forecast.id === selectedForecastId">
         <td>{{ forecast.date | date: 'dd/MM/yyyy' }}</td>
         <td>{{ forecast.temperatureC | number : '1.1-2' }}</td>
         <td>{{ forecast.temperatureF | number : '1.1-2' }}</td>
         <td>{{ forecast.summary.text }}</td>
         <td>{{ forecast.created | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
         <td>{{ forecast.modified | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
-        <td>
-          <button (click)="edit(forecast.id)">Edit</button>
-          <button (click)="remove(forecast.id)">Delete</button>
-        </td>
       </tr>
     }
   </tbody>

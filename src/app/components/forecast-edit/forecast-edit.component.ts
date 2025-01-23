@@ -7,6 +7,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AsyncPipe, NgIf} from '@angular/common';
+import {IdShareService} from '../../services/id-share/id-share.service';
 
 @Component({
   selector: 'app-forecast-edit',
@@ -22,13 +23,14 @@ export class ForecastEditComponent implements OnInit {
 
   formGroup: FormGroup | undefined;
   summaries$: Observable<SummaryViewModel[]>;
-  id: number;
+  id: number | undefined;
   forecast$: Observable<ForecastViewModel> | undefined;
 
   constructor(
     private apiService: ApiService,
     private router: Router,
-    route: ActivatedRoute,) {
+    route: ActivatedRoute,
+    public idShareService: IdShareService) {
     this.id = route.snapshot.params['id'];
     if (this.id !== undefined){
       this.forecast$ = apiService.getForecast$(this.id);
@@ -57,19 +59,22 @@ export class ForecastEditComponent implements OnInit {
     if (this.id !== undefined) {
       this.apiService
         .putForecast$(this.id, model)
-        .subscribe(() => {
+        .subscribe(editedForecast => {
+          this.idShareService.setId(editedForecast.id);
           this.router.navigate(['/forecasts'])
         })
     }else{
       this.apiService
         .postForecast$(model)
-        .subscribe(() => {
+        .subscribe(newForecast => {
+          this.idShareService.setId(newForecast.id);
           this.router.navigate(['/forecasts'])
         })
     }
   }
 
   onCancel() {
+    this.idShareService.setId(this.id);
     this.router.navigate(['/forecasts']);
   }
 
