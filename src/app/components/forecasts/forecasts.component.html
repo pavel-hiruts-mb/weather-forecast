@@ -1,0 +1,27 @@
+<div>
+  <button (click)="addData()">Add</button>
+  <button (click)="edit()" [disabled]="selectedForecastId === undefined">Edit</button>
+  <button (click)="remove()" [disabled]="selectedForecastId === undefined">Delete</button>
+</div>
+
+<table class="forecast-table">
+  <thead>
+  <tr>
+    @for (header of headers; track header){
+      <th>{{ header }}</th>
+    }
+  </tr>
+  </thead>
+  <tbody>
+    @for (forecast of forecasts$ | async; track forecast.id){
+      <tr (click)="selectRow(forecast.id)" [class.selected]="forecast.id === selectedForecastId">
+        <td>{{ forecast.date | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ forecast.temperatureC | number : '1.1-2' }}</td>
+        <td>{{ forecast.temperatureF | number : '1.1-2' }}</td>
+        <td>{{ forecast.summary.text }}</td>
+        <td>{{ forecast.created | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
+        <td>{{ forecast.modified | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

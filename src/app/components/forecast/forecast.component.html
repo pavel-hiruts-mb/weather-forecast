@@ -1,27 +1,32 @@
-<div>
-  <button (click)="addData()">Add</button>
-  <button (click)="edit()" [disabled]="selectedForecastId === undefined">Edit</button>
-  <button (click)="remove()" [disabled]="selectedForecastId === undefined">Delete</button>
-</div>
-
-<table class="forecast-table">
-  <thead>
-  <tr>
-    @for (header of headers; track header){
-      <th>{{ header }}</th>
-    }
-  </tr>
-  </thead>
-  <tbody>
-    @for (forecast of forecasts$ | async; track forecast.id){
-      <tr (click)="selectRow(forecast.id)" [class.selected]="forecast.id === selectedForecastId">
-        <td>{{ forecast.date | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ forecast.temperatureC | number : '1.1-2' }}</td>
-        <td>{{ forecast.temperatureF | number : '1.1-2' }}</td>
-        <td>{{ forecast.summary.text }}</td>
-        <td>{{ forecast.created | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
-        <td>{{ forecast.modified | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
-      </tr>
-    }
-  </tbody>
-</table>
+<form *ngIf="formGroup" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="date">Date:</label>
+    <input id="date" formControlName="date" type="date">
+  </div>
+  <div>
+    <label for="temperatureC">°C:</label>
+    <input id="temperatureC" formControlName="temperatureC" type="number">
+  </div>
+  <div>
+    <label for="temperatureF">°F:</label>
+    <input id="temperatureF" formControlName="temperatureF" type="number" readonly>
+  </div>
+  <div>
+    <label for="summary">Summary:</label>
+    <select id="summary" formControlName="summaryId">
+      @for (summary of summaries$ | async; track summary.id){
+        <option [value]="summary.id">{{summary.text}}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="created">Created:</label>
+    <input id="created" formControlName="created" readonly>
+  </div>
+  <div>
+    <label for="modified">Modified:</label>
+    <input id="modified" formControlName="modified" readonly>
+  </div>
+  <button type="submit">Submit</button>
+  <button type="button" (click)="onCancel()">Cancel</button>
+</form>
