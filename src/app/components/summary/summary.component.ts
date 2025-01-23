@@ -67,7 +67,10 @@ export class SummaryComponent implements OnInit {
   }
 
   onCancel() {
-    this.idShareService.setId(this.id);
+    if (this.id !== undefined) {
+      this.idShareService.setId(this.id);
+    }
+
     this.router.navigate(['/summaries']);
   }
 

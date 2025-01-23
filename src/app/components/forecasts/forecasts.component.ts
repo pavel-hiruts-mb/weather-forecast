@@ -40,6 +40,7 @@ export class ForecastsComponent implements OnInit {
     }
 
   addData() {
+    this.idShareService.setId(this.selectedForecastId);
     this.router.navigate(['/forecast/add']);
   }
 

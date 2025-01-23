@@ -43,6 +43,7 @@ export class SummariesComponent implements OnInit {
   }
 
   addData() {
+    this.idShareService.setId(this.selectedSummaryId);
     this.router.navigate(['/summary/add']);
   }
 
