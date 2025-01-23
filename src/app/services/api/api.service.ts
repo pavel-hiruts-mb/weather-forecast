@@ -10,6 +10,7 @@ import {SummaryCreateModel} from '../../interfaces/summary-create-model';
 import {SummaryUpdateModel} from '../../interfaces/summary-update-model';
 import {ForecastUpdateModel} from '../../interfaces/forecast-update-model';
 import {ForecastCreateModel} from '../../interfaces/forecast-create-model';
+import {FahrenheitService} from '../fahrenheit/fahrenheit.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,20 +20,21 @@ export class ApiService {
   private baseUrl = environment.apiBaseUrl;
 
   constructor(
-    private http: HttpClient
-  ) { }
+    private http: HttpClient,
+    private fahrenheitService: FahrenheitService){
+  }
 
   public getForecasts$(): Observable<ForecastViewModel[]> {
     return this.http
       .get<ForecastViewModel[]>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_ALL}`)
-      .pipe(map(forecasts => forecasts.map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) }))))
+      .pipe(map(forecasts => forecasts.map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.fahrenheitService.calculateFahrenheit(forecast.temperatureC) }))))
       .pipe(catchError(this.handleError));
   }
 
   public getForecast$(id: number): Observable<ForecastViewModel> {
     return this.http
       .get<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_GET}${id}`)
-      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
+      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.fahrenheitService.calculateFahrenheit(forecast.temperatureC) })))
       .pipe(catchError(this.handleError));
   }
 
@@ -57,14 +59,14 @@ export class ApiService {
   public putForecast$(id: number, data: ForecastUpdateModel) {
     return this.http
       .put<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_PUT}${id}`, data)
-      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
+      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.fahrenheitService.calculateFahrenheit(forecast.temperatureC) })))
       .pipe(catchError(this.handleError));
   }
 
   public postForecast$(data: ForecastCreateModel) {
     return this.http
       .post<ForecastViewModel>(`${this.baseUrl}${API_ENDPOINTS.FORECAST_POST}`, data)
-      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.calculateFahrenheit(forecast.temperatureC) })))
+      .pipe(map(forecast => ({ ...forecast, temperatureF: forecast.temperatureF = this.fahrenheitService.calculateFahrenheit(forecast.temperatureC) })))
       .pipe(catchError(this.handleError));
   }
 
@@ -89,9 +91,5 @@ export class ApiService {
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     return throwError(() => new Error('Something went wrong'));
-  }
-
-  private calculateFahrenheit(celsius: number): number {
-    return 32 + (celsius / 0.5556);
   }
 }

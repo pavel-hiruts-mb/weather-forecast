@@ -8,6 +8,7 @@ import {Observable} from 'rxjs';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AsyncPipe, NgIf} from '@angular/common';
 import {IdShareService} from '../../services/id-share/id-share.service';
+import {FahrenheitService} from '../../services/fahrenheit/fahrenheit.service';
 
 @Component({
   selector: 'app-forecast',
@@ -30,7 +31,8 @@ export class ForecastComponent implements OnInit {
     private apiService: ApiService,
     private router: Router,
     route: ActivatedRoute,
-    public idShareService: IdShareService) {
+    private idShareService: IdShareService,
+    private fahrenheitService: FahrenheitService) {
     this.id = route.snapshot.params['id'];
     if (this.id !== undefined){
       this.forecast$ = apiService.getForecast$(this.id);
@@ -92,11 +94,7 @@ export class ForecastComponent implements OnInit {
     let tmpF = this.formGroup?.get('temperatureF');
 
     tmpC?.valueChanges.subscribe(temperatureC => {
-      tmpF?.setValue(this.convertToFahrenheit(temperatureC), {emitEvent: false});
+      tmpF?.setValue(this.fahrenheitService.calculateFahrenheit(temperatureC), {emitEvent: false});
     });
-  }
-
-  convertToFahrenheit(celsius: number): number {
-    return (celsius * 9/5) + 32;
   }
 }
