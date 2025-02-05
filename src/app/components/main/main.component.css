@@ -1,22 +1,9 @@
 main {
     margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  .top-bar {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    text-align: center;
   }
   .container {
     display: flex;
     height: 100vh;
-  }
-  .left-menu {
-    width: 200px;
-    background-color: #f4f4f4;
-    padding: 15px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
   }
   .content {
     flex: 1;
