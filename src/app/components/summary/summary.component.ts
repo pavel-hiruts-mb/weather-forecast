@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AsyncPipe, NgIf} from '@angular/common';
+import {NgIf} from '@angular/common';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {SummaryViewModel} from '../../interfaces/summary-view-model';
@@ -7,12 +7,19 @@ import {ApiService} from '../../services/api/api.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {IdShareService} from '../../services/id-share/id-share.service';
 import {SummaryUpdateModel} from '../../interfaces/summary-update-model';
+import {MatButton} from "@angular/material/button";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatInput} from "@angular/material/input";
 
 @Component({
   selector: 'app-summary',
   imports: [
     NgIf,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatButton,
+    MatFormField,
+    MatInput,
+    MatLabel
   ],
   templateUrl: './summary.component.html',
   styleUrl: './summary.component.css'
@@ -77,8 +84,8 @@ export class SummaryComponent implements OnInit {
   createFormGroup(summary: SummaryViewModel | undefined){
     this.formGroup = new FormGroup({
       text: new FormControl(summary?.text, Validators.required),
-      created: new FormControl(summary?.created),
-      modified: new FormControl(summary?.modified),
+      created: new FormControl({value:summary?.created, disabled: true}),
+      modified: new FormControl({value:summary?.modified, disabled: true}),
     });
   }
 }
