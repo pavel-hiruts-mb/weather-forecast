@@ -1,27 +1,44 @@
-<div>
-  <button (click)="addData()">Add</button>
-  <button (click)="edit()" [disabled]="selectedForecastId === undefined">Edit</button>
-  <button (click)="remove()" [disabled]="selectedForecastId === undefined">Delete</button>
+<div class="button-container">
+  <button mat-raised-button color="primary" (click)="addData()" >Add</button>
+  <button mat-raised-button color="accent" (click)="edit()" [disabled]="selectedForecastId === undefined">Edit</button>
+  <button mat-raised-button color="warn" (click)="remove()" [disabled]="selectedForecastId === undefined">Delete</button>
 </div>
 
-<table class="forecast-table">
-  <thead>
-  <tr>
-    @for (header of headers; track header){
-      <th>{{ header }}</th>
-    }
-  </tr>
-  </thead>
-  <tbody>
-    @for (forecast of forecasts$ | async; track forecast.id){
-      <tr (click)="selectRow(forecast.id)" [class.selected]="forecast.id === selectedForecastId">
-        <td>{{ forecast.date | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ forecast.temperatureC | number : '1.1-2' }}</td>
-        <td>{{ forecast.temperatureF | number : '1.1-2' }}</td>
-        <td>{{ forecast.summary.text }}</td>
-        <td>{{ forecast.created | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
-        <td>{{ forecast.modified | date: 'dd/MM/yyyy HH:mm:ss.SSS' }}</td>
-      </tr>
-    }
-  </tbody>
+<table mat-table [dataSource]="forecasts$" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef> Date </th>
+    <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="temperatureC">
+    <th mat-header-cell *matHeaderCellDef> °C </th>
+    <td mat-cell *matCellDef="let element"> {{element.temperatureC | number : '1.1-2'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="temperatureF">
+    <th mat-header-cell *matHeaderCellDef> °F </th>
+    <td mat-cell *matCellDef="let element"> {{element.temperatureF | number : '1.1-2'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="summary">
+    <th mat-header-cell *matHeaderCellDef> Summary </th>
+    <td mat-cell *matCellDef="let element"> {{element.summary.text}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="created">
+    <th mat-header-cell *matHeaderCellDef> Created </th>
+    <td mat-cell *matCellDef="let element"> {{element.created | date: 'yyyy-MM-dd HH:mm:ss'}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="modified">
+    <th mat-header-cell *matHeaderCellDef> Modified </th>
+    <td mat-cell *matCellDef="let element"> {{element.modified | date: 'yyyy-MM-dd HH:mm:ss'}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let element; columns: columns;" (click)="selectRow(element.id)" [class.selected]="element.id === selectedForecastId"></tr>
+
 </table>
+
+

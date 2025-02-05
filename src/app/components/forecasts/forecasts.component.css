@@ -1,17 +1,9 @@
-.forecast-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-.forecast-table th, .forecast-table td {
-  border: 1px solid black;
-  padding: 8px;
-  text-align: left;
-}
-
-.forecast-table th {
-  background-color: #d3d3d3;
-}
-
 .selected {
-  background-color: lightblue; /* Light grey background for selected row */
+  background-color: lightblue;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
 }
